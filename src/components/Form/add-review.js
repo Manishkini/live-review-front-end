@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '../Layout/header';
 import Footer from '../Layout/footer';
 
@@ -7,6 +7,7 @@ import './review.css';
 
 const AddReviewForm = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState(undefined);
   const [content, setContent] = useState(undefined);
@@ -59,12 +60,24 @@ const AddReviewForm = () => {
       body: JSON.stringify(data),
     })
       .then((e) => e.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        console.log(data);
+        navigate('/');
+      });
   };
 
   const handleReset = () => {
     setTitle('');
     setContent('');
+  };
+
+  const handleDelete = () => {
+    fetch(`http://localhost:9630/delete-review/${id}`)
+      .then((e) => e.json())
+      .then((data) => {
+        console.log(data);
+        navigate('/');
+      });
   };
 
   if (isError) return <span>User Not Found</span>;
@@ -99,6 +112,7 @@ const AddReviewForm = () => {
           <div className="input-box">
             <button onClick={handleSubmit}>Submit</button>
             <button onClick={handleReset}>Reset</button>
+            {!isCreate ? <button onClick={handleDelete}>Delete</button> : null}
           </div>
         </div>
       </div>

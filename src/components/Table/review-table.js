@@ -7,16 +7,21 @@ import './table.css';
 const ReviewTable = () => {
   const [reviews, setReviews] = useState([]);
 
-  useEffect(() => {
+  const fetchReview = () => {
     fetch('http://localhost:9630/')
       .then((e) => e.json())
       .then((data) => setReviews(data.data));
-  }, []);
+  };
+
+  useEffect(() => fetchReview(), []);
 
   const handleDelete = (id) => {
     fetch(`http://localhost:9630/delete-review/${id}`)
       .then((e) => e.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        console.log(data);
+        fetchReview();
+      });
   };
 
   return (
@@ -28,7 +33,7 @@ const ReviewTable = () => {
           <th>Content</th>
           <th>Date</th>
           <th>Edit</th>
-          <th>Edit</th>
+          <th>Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -50,7 +55,9 @@ const ReviewTable = () => {
             </tr>
           ))
         ) : (
-          <span>No Reviews found</span>
+          <tr id="no-review">
+            <td colSpan={6}>No Reviews found</td>
+          </tr>
         )}
       </tbody>
     </table>
